@@ -1,5 +1,15 @@
+build/*
+
+checks.json
+
 # Prerequisites
 *.d
+
+CMakeCache.txt
+cmake_install.cmake
+
+**/__pycache__/
+**/*.py[cod]
 
 # Compiled Object files
 *.slo
@@ -11,20 +21,10 @@
 *.gch
 *.pch
 
-# Linker files
-*.ilk
-
-# Debugger Files
-*.pdb
-
 # Compiled Dynamic libraries
 *.so
 *.dylib
 *.dll
-
-# Fortran module files
-*.mod
-*.smod
 
 # Compiled Static libraries
 *.lai
@@ -36,6 +36,3 @@
 *.exe
 *.out
 *.app
-
-# debug information files
-*.dwo
