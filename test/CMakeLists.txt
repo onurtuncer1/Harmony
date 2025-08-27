@@ -10,6 +10,7 @@ find_package(Catch2 REQUIRED)
 
 add_executable(${PROJECT_NAME}Tests
   test_AsciiSTL.cpp
+  test_BinarySTL.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}Tests PRIVATE

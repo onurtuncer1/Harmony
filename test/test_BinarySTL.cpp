@@ -13,6 +13,8 @@
 
 #include "Harmony/STL/Ascii.h"
 #include "Harmony/STL/Parse.h"
+#include "Harmony/STL/Binary.h"
+#include "Harmony/STL/Mesh.h"
 
 #include <filesystem>
 #include <fstream>
@@ -82,7 +84,7 @@ TEST_CASE("Binary STL: serialize -> parse round-trip (stringstream)") {
 TEST_CASE("Binary STL: writer computes normal if zero") {
     Mesh m;
     m.name = "nfix";
-    HSTL::Triangle t{};
+    Triangle t{};
     t.v[0] = {0,0,0};
     t.v[1] = {1,0,0};
     t.v[2] = {0,1,0};
@@ -90,9 +92,9 @@ TEST_CASE("Binary STL: writer computes normal if zero") {
     m.tris.push_back(t);
 
     std::stringstream ss(std::ios::in | std::ios::out | std::ios::binary);
-    REQUIRE(HSTL::serialize(ss, m));
+    REQUIRE(serialize(ss, m));
     ss.seekg(0);
-    auto r = HSTL::parse_binary(ss);
+    auto r = parse(ss);
     REQUIRE(r.has_value());
     const auto& tri = r->tris.at(0);
     REQUIRE(nearly_equal(tri.normal.x, 0.f));
@@ -101,7 +103,7 @@ TEST_CASE("Binary STL: writer computes normal if zero") {
 }
 
 TEST_CASE("Binary STL: file I/O round-trip with non-zero attribute bytes") {
-    HSTL::Mesh m;
+    Mesh m;
     m.name = "attr";
     HSTL::Triangle t{};
     t.v[0] = {0,0,0};
@@ -114,12 +116,12 @@ TEST_CASE("Binary STL: file I/O round-trip with non-zero attribute bytes") {
     {
         std::ofstream out(tmp, std::ios::binary);
         REQUIRE(out.good());
-        REQUIRE(HSTL::serialize_binary(out, m, "attr-header", /*attribute_byte_count*/ 2));
+        REQUIRE(serialize(out, m, "attr-header", /*attribute_byte_count*/ 2));
     }
     {
         std::ifstream in(tmp, std::ios::binary);
         REQUIRE(in.good());
-        auto r = HSTL::parse_binary(in);
+        auto r = parse(in);
         REQUIRE(r.has_value());
         REQUIRE(r->tris.size() == 1);
         check_vec3(r->tris[0].v[0], {0,0,0});
@@ -145,7 +147,7 @@ endsolid auto
 )";
     {
         std::stringstream ss; ss << asciiTxt; // text is fine; parse_auto peeks then ASCII path
-        auto r = HSTL::parse_auto(ss);
+        auto r = Harmony::STL::parse(ss);
         REQUIRE(r.has_value());
         REQUIRE(r->tris.size() == 1);
         check_vec3(r->tris[0].normal, {0,0,1});
@@ -153,12 +155,16 @@ endsolid auto
 
     // 2) Binary
     {
-        HSTL::Mesh m;
+        Mesh m;
         m.name = "auto-binary";
-        HSTL::Triangle t{}; t.v[0]={0,0,0}; t.v[1]={1,0,0}; t.v[2]={0,1,0}; t.normal={0,0,1};
+        Triangle t{};
+        t.v[0]={0,0,0};
+        t.v[1]={1,0,0}; 
+        t.v[2]={0,1,0}; 
+        t.normal={0,0,1};
         m.tris.push_back(t);
         std::stringstream ss(std::ios::in | std::ios::out | std::ios::binary);
-        REQUIRE(HSTL::serialize_binary(ss, m, "auto-bin", 0));
+        REQUIRE(serialize(ss, m, "auto-bin", 0));
         ss.seekg(0);
         auto r = Harmony::STL::parse(ss);
         REQUIRE(r.has_value());
@@ -223,7 +229,7 @@ TEST_CASE("Binary STL: large mesh reserve and precision tolerance") {
     }
 
     std::stringstream ss(std::ios::in | std::ios::out | std::ios::binary);
-    REQUIRE(HSTL::serialize_binary(ss, m));
+    REQUIRE(serialize(ss, m));
     ss.seekg(0);
     auto r = parse(ss);
     REQUIRE(r.has_value());
