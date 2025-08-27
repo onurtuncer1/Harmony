@@ -17,7 +17,6 @@ project(Harmony
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 add_library(${PROJECT_NAME})
-add_library(Harmony ALIAS ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME}
   PUBLIC 
@@ -26,10 +25,9 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_sources(${PROJECT_NAME} PRIVATE
- # src/Logger.cpp
+  src/STL/Ascii.cpp
 
 )
-
 
 if (BUILD_DOCS)
   add_subdirectory(doc)

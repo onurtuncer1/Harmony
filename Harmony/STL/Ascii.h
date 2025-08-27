@@ -22,6 +22,7 @@
 
 namespace Harmony::STL {
 
+// Consider using vectors from cadence library
 struct Vec3 {
     float x{}, y{}, z{};
 };
@@ -66,4 +67,4 @@ bool serialize(std::ostream& os, const Mesh& mesh, int float_precision = 6);
     return n;
 }
 
-} // namespace ascii_stl
+} // namespace Harmony::STL
