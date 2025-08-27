@@ -6,7 +6,7 @@
 // License - Filename : LICENSE
 // ----------------------------------------------------------------------
 
-#include "Harmony/Parse.h"
+#include "Harmony/STL/Parse.h"
 
 namespace Harmony::STL {
 
@@ -24,12 +24,12 @@ parse(std::istream& is, bool compute_missing_normals) {
     is.seekg(pos);
 
     if (readOk == 6 && std::string_view(probe,6) == std::string_view("solid ")) {
-        return parse(is, compute_missing_normals); // ASCII path (your existing function)
+        return ASCII::parse(is, compute_missing_normals); // ASCII path (your existing function)
     }
 
     // Binary path: read header+count, then restore stream and call binary parser
     // (Some ASCII files also start with "solid<no-space>", catch those by trying ASCII first)
-    return parse_binary(is, compute_missing_normals);
+    return Binary::parse(is, compute_missing_normals);
 }
 
 } // namespace Harmony::STL

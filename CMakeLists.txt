@@ -27,6 +27,7 @@ target_include_directories(${PROJECT_NAME}
 target_sources(${PROJECT_NAME} PRIVATE
   src/STL/Ascii.cpp
   src/STL/Binary.cpp
+  src/STL/Parse.cpp
 )
 
 if (BUILD_DOCS)
