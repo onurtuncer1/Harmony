@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------
 
 #include <algorithm>
+#include <format>
 #include <cctype>
 #include <istream>
 #include <ostream>
@@ -15,7 +16,7 @@
 
 #include "Harmony/STL/Ascii.h"
 
-namespace Harmony::STL {
+namespace Harmony::STL::ASCII {
 
 namespace {
 
@@ -107,120 +108,6 @@ parse_three_floats_tokens(const std::vector<std::string_view>& toks, size_t t, s
 
 
 } // namespace
-
-// std::expected<Mesh, std::string> parse(std::string_view text, bool compute_missing_normals) noexcept {
-//     Mesh mesh;
-//     mesh.tris.clear();
-
-//     // iterate lines with ranges (keeps views, but we'll copy where needed)
-//     bool in_solid = false;
-//     Triangle current{};
-//     enum class Phase { idle, have_facet, in_loop, have_v1, have_v2 } phase = Phase::idle;
-//     size_t line_no = 0;
-
-//     for (auto line_view : text | std::views::split('\n')) {
-//         ++line_no;
-//         std::string_view line{ &*line_view.begin(), static_cast<size_t>(std::ranges::distance(line_view)) };
-//         auto line_trim = trim(line);
-//         if (line_trim.empty()) continue;
-
-//         // Header: solid <name...>
-//         if (!in_solid) {
-//             if (!starts_with_icase(line_trim, "solid"))
-//                 return std::unexpected(std::format("Line {}: expected 'solid'", line_no));
-//             // name is remainder after 'solid'
-//             auto name_sv = trim(line_trim.substr(std::min<size_t>(line_trim.size(), 5)));
-//             mesh.name = std::string{name_sv};
-//             in_solid = true;
-//             continue;
-//         }
-
-//         // Try to match keywords (case-insensitive)
-//         if (starts_with_icase(line_trim, "endsolid")) {
-//             // optionally check name; we accept any
-//             in_solid = false;
-//             break;
-//         }
-
-//         if (starts_with_icase(line_trim, "facet normal")) {
-//             if (phase != Phase::idle)
-//                 return std::unexpected(std::format("Line {}: 'facet' where not expected", line_no));
-//             auto rest = trim(line_trim.substr(12)); // after "facet normal"
-//             auto arr = parse_three_floats_tail(rest);
-//             if (!arr) return std::unexpected(std::format("Line {}: {}", line_no, arr.error()));
-//             current.normal = Vec3{(*arr)[0], (*arr)[1], (*arr)[2]};
-//             phase = Phase::have_facet;
-//             continue;
-//         }
-
-//         if (starts_with_icase(line_trim, "outer loop")) {
-//             if (phase != Phase::have_facet)
-//                 return std::unexpected(std::format("Line {}: 'outer loop' without facet", line_no));
-//             phase = Phase::in_loop;
-//             continue;
-//         }
-
-//         if (starts_with_icase(line_trim, "vertex")) {
-//             if (phase != Phase::in_loop && phase != Phase::have_v1 && phase != Phase::have_v2)
-//                 return std::unexpected(std::format("Line {}: 'vertex' outside of loop", line_no));
-//             auto rest = trim(line_trim.substr(6)); // after "vertex"
-//             auto arr = parse_three_floats_tail(rest);
-//             if (!arr) return std::unexpected(std::format("Line {}: {}", line_no, arr.error()));
-//             if (phase == Phase::in_loop) {
-//                 current.v[0] = Vec3{(*arr)[0], (*arr)[1], (*arr)[2]};
-//                 phase = Phase::have_v1;
-//             } else if (phase == Phase::have_v1) {
-//                 current.v[1] = Vec3{(*arr)[0], (*arr)[1], (*arr)[2]};
-//                 phase = Phase::have_v2;
-//             } else {
-//                 current.v[2] = Vec3{(*arr)[0], (*arr)[1], (*arr)[2]};
-//                 // keep phase, expect endloop
-//             }
-//             continue;
-//         }
-
-//         if (starts_with_icase(line_trim, "endloop")) {
-//             if (phase != Phase::have_v2)
-//                 return std::unexpected(std::format("Line {}: 'endloop' before three vertices", line_no));
-//             // ok
-//             continue;
-//         }
-
-//         if (starts_with_icase(line_trim, "endfacet")) {
-//             if (phase != Phase::have_v2)
-//                 return std::unexpected(std::format("Line {}: 'endfacet' without complete triangle", line_no));
-//             // Fill normal if zero or requested
-//             if (compute_missing_normals) {
-//                 if (std::abs(current.normal.x) + std::abs(current.normal.y) + std::abs(current.normal.z) < 1e-20f) {
-//                     current.normal = face_normal(current);
-//                 }
-//             }
-//             mesh.tris.push_back(current);
-//             current = Triangle{};
-//             phase = Phase::idle;
-//             continue;
-//         }
-
-//         // Allow 'endsolid name' anywhere after triangles
-//         // Otherwise ignore unknown/extra whitespace-only lines
-//         if (starts_with_icase(line_trim, "solid")) {
-//             // Some files repeat 'solid name' before facets; accept and reset name
-//             mesh.name = std::string{trim(line_trim.substr(5))};
-//             continue;
-//         }
-
-//         // If the line is none of the known constructs, treat as error
-//         return std::unexpected(std::format("Line {}: unexpected content: '{}'", line_no, std::string(line_trim)));
-//     }
-
-//     if (in_solid) {
-//         // If we never saw endsolid, still return what we parsed
-//         // but ensure we are not mid-triangle
-//         if (phase != Phase::idle)
-//             return std::unexpected("Unexpected EOF: unterminated facet/loop");
-//     }
-//     return mesh;
-// }
 
 // In namespace Harmony::STL
 std::expected<Mesh, std::string>

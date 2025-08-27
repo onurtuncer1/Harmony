@@ -26,7 +26,7 @@ target_include_directories(${PROJECT_NAME}
 
 target_sources(${PROJECT_NAME} PRIVATE
   src/STL/Ascii.cpp
-
+  src/STL/Binary.cpp
 )
 
 if (BUILD_DOCS)

@@ -17,13 +17,14 @@
 #include <filesystem>
 
 #include <Harmony/STL/Ascii.h>
+#include <Harmony/STL/Mesh.h>
 
 using Catch::Matchers::ContainsSubstring;
 using Catch::Matchers::WithinAbs;
 
 namespace fs = std::filesystem;
 
-using namespace Harmony::STL;
+using namespace Harmony::STL::ASCII;
 
 using Harmony::STL::Mesh;
 using Harmony::STL::Triangle;

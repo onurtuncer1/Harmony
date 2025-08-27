@@ -8,34 +8,21 @@
 
 #pragma once
 
-#include <array>
-#include <charconv>
-#include <cmath>
+// #include <array>
+// #include <charconv>
+// #include <cmath>
 #include <expected>
-#include <format>
+
 #include <iosfwd>
-#include <optional>
+// #include <optional>
 #include <string>
 #include <string_view>
-#include <utility>
-#include <vector>
+// #include <utility>
+// #include <vector>
 
-namespace Harmony::STL {
+#include "Mesh.h"
 
-// Consider using vectors from cadence library
-struct Vec3 {
-    float x{}, y{}, z{};
-};
-
-struct Triangle {
-    Vec3 normal{};
-    std::array<Vec3,3> v{};
-};
-
-struct Mesh {
-    std::string name;
-    std::vector<Triangle> tris;
-};
+namespace Harmony::STL::ASCII {
 
 /// Parse an ASCII STL from a contiguous text buffer
 [[nodiscard]] std::expected<Mesh, std::string>
@@ -51,20 +38,4 @@ parse(std::istream& is, bool compute_missing_normals = true);
 /// Serialize to stream (returns false on I/O error)
 bool serialize(std::ostream& os, const Mesh& mesh, int float_precision = 6);
 
-/// Utility: compute geometric normal of a triangle (right-handed)
-[[nodiscard]] inline Vec3 face_normal(const Triangle& t) {
-    auto sub = [](const Vec3& a, const Vec3& b){ return Vec3{a.x-b.x, a.y-b.y, a.z-b.z}; };
-    auto cross = [](const Vec3& a, const Vec3& b){
-        return Vec3{
-            a.y*b.z - a.z*b.y,
-            a.z*b.x - a.x*b.z,
-            a.x*b.y - a.y*b.x
-        };
-    };
-    auto n = cross(sub(t.v[1], t.v[0]), sub(t.v[2], t.v[0]));
-    const float len = std::sqrt(n.x*n.x + n.y*n.y + n.z*n.z);
-    if (len > 0.0f) { n.x/=len; n.y/=len; n.z/=len; }
-    return n;
-}
-
-} // namespace Harmony::STL
+} // namespace Harmony::STL::ASCII
